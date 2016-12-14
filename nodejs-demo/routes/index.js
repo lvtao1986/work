@@ -3,7 +3,16 @@ var jade = require('pug');
 var router = express.Router();
 
 var int = "init()";
-eval(int);
+var count = 0;
+
+/* GET home page. */
+router.get('/', function(req, res, next) {
+	count++;
+	if(count > 1){
+		eval(int);
+	}
+	next();
+});
 
 function init (){
 /* GET home page. */
