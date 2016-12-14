@@ -1,1 +1,1 @@
-forever -w start bin/www
+pm2 start bin/www --watch --name="nodejs-demo"

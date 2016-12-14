@@ -1,1 +1,1 @@
-forever stop bin/www
+pm2 stop bin/www
