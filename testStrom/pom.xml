@@ -1,0 +1,106 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>emarbox.cm.storm</groupId>
+  <artifactId>emarboxCmStorm</artifactId>
+  <version>0.0.3-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>emarboxCmStorm</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+
+<dependencies>
+    <dependency>
+    	<groupId>org.apache.storm</groupId>
+    	<artifactId>storm-core</artifactId>
+    	<version>1.0.1</version>
+	    <scope>provided</scope>
+    </dependency>
+	<dependency>
+	    <groupId>redis.clients</groupId>
+	    <artifactId>jedis</artifactId>
+	    <version>2.8.1</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
+	<dependency>
+	    <groupId>com.google.protobuf</groupId>
+	    <artifactId>protobuf-java</artifactId>
+	    <version>2.4.1</version>
+	</dependency>
+	<dependency>
+		<groupId>javax.jms</groupId>
+		<artifactId>jms</artifactId>
+		<version>1.1</version>
+	</dependency>
+
+	<!-- https://mvnrepository.com/artifact/com.sun.jmx/jmxri -->
+	<dependency>
+	    <groupId>com.sun.jmx</groupId>
+	    <artifactId>jmxri</artifactId>
+	    <version>1.2.1</version>
+	</dependency>
+	<!-- https://mvnrepository.com/artifact/log4j/log4j -->
+	<dependency>
+	    <groupId>log4j</groupId>
+	    <artifactId>log4j</artifactId>
+	    <version>1.2.17</version>
+	</dependency>
+    <dependency>
+       <groupId>commons-codec</groupId>
+       <artifactId>commons-codec</artifactId>
+       <version>1.9</version>
+   </dependency>
+   <dependency>  
+      <groupId>commons-lang</groupId>  
+      <artifactId>commons-lang</artifactId>  
+      <version>2.6</version>  
+    </dependency>
+   <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
+	<dependency>
+	    <groupId>com.alibaba</groupId>
+	    <artifactId>fastjson</artifactId>
+	    <version>1.1.41</version>
+	</dependency>
+</dependencies>
+<build>
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <source>${maven.compiler.target}</source>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>1.4</version>
+                <configuration>
+                    <createDependencyReducedPom>true</createDependencyReducedPom>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
