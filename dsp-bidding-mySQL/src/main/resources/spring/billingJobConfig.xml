@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="
+     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+     http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd 
+     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd 
+     http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+
+	<bean id="billingSchedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="clearCostDetailJobTrigger" />
+				
+				<!-- status -->
+				<ref bean="isMajorNodeJobTrigger" />
+				
+				<!-- cost -->
+				<ref bean="campaignOfflineJobTrigger" />
+				
+				<ref bean="costJobTrigger" />
+				
+				<ref bean="costReportJobTrigger" />
+				<ref bean="dmapBillDataJobTrigger" />
+				<ref bean="preBillingJobTrigger" />
+				
+				<ref bean="accountCheckJobTrigger" />
+				
+				<!-- data -->
+				<ref bean="dataCacheJobStartTrigger" />
+				<ref bean="dataCacheJobTrigger"/>
+				<ref bean="dataRefreshJobStartTrigger" />
+				<ref bean="dataRefreshJobTrigger"/>
+			</list>
+		</property>
+		<property name="startupDelay" value="3" />
+		<property name="configLocation" value="classpath:quartz.properties"></property>
+	</bean>
+
+	<!-- CampaignOfflineScheduler start  -->
+
+	<bean id="campaignOfflineJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="campaignOfflineJobDetail" />
+		<property name="cronExpression" value="0/5 * * * * ?"  />
+	</bean>
+	<bean id="campaignOfflineJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="campaignOfflineScheduler" />
+		<property name="targetMethod" value="execute" />
+		<property name="concurrent" value="false" />
+	</bean>
+	
+	<bean id="campaignOfflineScheduler" class="com.emarbox.dspmonitor.scheduler.CampaignOfflineScheduler" >
+	</bean>
+	
+	
+	<!-- CampaignOfflineScheduler end -->
+	
+	<!-- CostScheduler start -->
+	<bean id="costJobTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail">
+			<ref bean="costJobDetail" />
+		</property>
+		<property name="startDelay">
+			<value>1</value>
+		</property>
+		<property name="repeatInterval">
+			<value>1</value>
+		</property>
+		<property name="repeatCount">
+			<value>0</value>
+		</property>
+	</bean>
+	
+	<bean id="costJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="costScheduler" />
+		<property name="targetMethod" value="execute" />
+		<property name="concurrent" value="false" />
+	</bean>
+	
+	<bean id="costScheduler" class="com.emarbox.dspmonitor.scheduler.CostScheduler" />
+	
+	<!-- CostScheduler end -->
+	
+	<!-- DmapBillDataScheduler start -->
+	<bean id="dmapBillDataJobTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail">
+			<ref bean="dmapBillDataJobDetail" />
+		</property>
+		<property name="startDelay">
+			<value>1</value>
+		</property>
+		<property name="repeatInterval">
+			<value>1</value>
+		</property>
+		<property name="repeatCount">
+			<value>0</value>
+		</property>
+	</bean>
+	
+	<bean id="dmapBillDataJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="dmapBillDataScheduler" />
+		<property name="targetMethod" value="execute" />
+		<property name="concurrent" value="false" />
+	</bean>
+	
+	<bean id="dmapBillDataScheduler" class="com.emarbox.dspmonitor.scheduler.DmapBillDataScheduler" />
+	
+	<!-- DmapBillDataScheduler end -->
+	
+	<!-- DmapBillDataScheduler start -->
+	<bean id="preBillingJobTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail">
+			<ref bean="preBillingJobDetail" />
+		</property>
+		<property name="startDelay">
+			<value>1</value>
+		</property>
+		<property name="repeatInterval">
+			<value>1</value>
+		</property>
+		<property name="repeatCount">
+			<value>0</value>
+		</property>
+	</bean>
+	
+	<bean id="preBillingJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="preBillingScheduler" />
+		<property name="targetMethod" value="execute" />
+		<property name="concurrent" value="false" />
+	</bean>
+	
+	<bean id="preBillingScheduler" class="com.emarbox.dspmonitor.scheduler.PreBillingScheduler" />
+	
+	<!-- PreBillingScheduler end -->
+	
+	<!-- CostReportScheduler start -->
+	<bean id="costReportJobTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail">
+			<ref bean="costReportJobDetail" />
+		</property>
+		<property name="startDelay">
+			<value>1</value>
+		</property>
+		<property name="repeatInterval">
+			<value>1</value>
+		</property>
+		<property name="repeatCount">
+			<value>0</value>
+		</property>
+	</bean>
+	
+	<bean id="costReportJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="costReportScheduler" />
+		<property name="targetMethod" value="execute" />
+		<property name="concurrent" value="false" />
+	</bean>
+	
+	<bean id="costReportScheduler" class="com.emarbox.dspmonitor.scheduler.CostReportScheduler" />
+	
+	<!-- CostReportScheduler end -->
+	
+	<!-- IsMajorNodeScheduler start -->
+	<bean id="isMajorNodeJobTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail">
+			<ref bean="isMajorNodeJobDetail" />
+		</property>
+		<property name="startDelay">
+			<value>1</value>
+		</property>
+		<property name="repeatInterval">
+			<value>1</value>
+		</property>
+		<property name="repeatCount">
+			<value>0</value>
+		</property>
+	</bean>
+	<bean id="isMajorNodeJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="isMajorNodeScheduler" />
+		<property name="targetMethod" value="execute" />
+		<property name="concurrent" value="false" />
+	</bean>
+	
+	<bean id="isMajorNodeScheduler" class="com.emarbox.dspmonitor.scheduler.status.IsMajorNodeScheduler" >
+	</bean>
+	
+	
+	<!-- IsMajorNodeScheduler end -->
+	
+	
+	<!-- clearCostDetailScheduler start  -->
+
+	<bean id="clearCostDetailJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="clearCostDetailJobDetail" />
+		<property name="cronExpression" value="0 0 0/1 * * ?"  />
+	</bean>
+	<bean id="clearCostDetailJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="clearCostDetailScheduler" />
+		<property name="targetMethod" value="execute" />
+		<property name="concurrent" value="false" />
+	</bean>
+	
+	<bean id="clearCostDetailScheduler" class="com.emarbox.dspmonitor.scheduler.clear.ClearCostDetailScheduler" >
+	</bean>
+	
+	
+	<!-- clearCostDetailScheduler end -->
+	
+
+	<!-- AccountCheckScheduler start -->
+	
+	
+	<bean id="accountCheckJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="accountCheckJobDetail" />
+		<property name="cronExpression" value="0/5 * * * * ?" />
+	</bean>
+	<bean id="accountCheckJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="accountCheckScheduler" />
+		<property name="targetMethod" value="execute" />
+		<property name="concurrent" value="false" />
+	</bean>
+	
+	<bean id="accountCheckScheduler" class="com.emarbox.dspmonitor.scheduler.AccountCheckScheduler" >
+	</bean>
+
+	<!--  AccountCheckScheduler  end -->
+	
+	<!-- profit rate set scheduler start -->
+	<bean id="dataCacheJobStartTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail">
+			<ref bean="dataCacheJobDetail" />
+		</property>
+		<property name="startDelay">
+			<value>1</value>
+		</property>
+		<property name="repeatInterval">
+			<value>1</value>
+		</property>
+		<property name="repeatCount">
+			<value>0</value>
+		</property>
+	</bean>
+	<bean id="dataCacheJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="dataCacheJobDetail" />
+		<property name="cronExpression" value="0 0/1 * * * ?" />
+	</bean>
+	<bean id="dataCacheJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="dataCacheSetScheduler" />
+		<property name="targetMethod" value="execute" />
+		<property name="concurrent" value="false" />
+	</bean>
+	
+	<bean id="dataCacheSetScheduler" class="com.emarbox.dspmonitor.scheduler.DataCacheScheduler" >
+	</bean>
+	<!-- profit rate set scheduler end -->
+
+	<!-- profit rate set scheduler start -->
+	<bean id="dataRefreshJobStartTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail">
+			<ref bean="dataRefreshJobDetail" />
+		</property>
+		<property name="startDelay">
+			<value>1</value>
+		</property>
+		<property name="repeatInterval">
+			<value>1</value>
+		</property>
+		<property name="repeatCount">
+			<value>0</value>
+		</property>
+	</bean>
+	<bean id="dataRefreshJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="dataRefreshJobDetail" />
+		<property name="cronExpression" value="0 0/1 * * * ?" />
+	</bean>
+	<bean id="dataRefreshJobDetail"
+		  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="dataRefreshScheduler" />
+		<property name="targetMethod" value="execute" />
+		<property name="concurrent" value="false" />
+	</bean>
+
+	<bean id="dataRefreshScheduler" class="com.emarbox.dspmonitor.scheduler.DataRefreshScheduler" >
+	</bean>
+	<!-- profit rate set scheduler end -->
+	
+</beans>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd
+     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd"
+	default-autowire="byType">
+
+
+
+	<!-- 这两个 context 也放在这里，为了方便独立程序运行时，能够实现组件(Bean)自动注入 
+	<context:annotation-config />  -->
+
+	<!-- Scans the classpath for annotated components that will be auto-registered  as Spring beans.
+		By default, the Spring-provided @Component, @Repository, @Service and  @Controller stereotypes will be detecte
+	<context:component-scan base-package="com.emar.adwiser.*" />  -->
+
+	<!-- 测试类 
+	<context:component-scan base-package="test.*" /> -->
+
+
+	<!-- 
+	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" /> 
+	 -->
+
+	<!-- 配置事务的传播特性
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			// all methods starting with 'get' are read-only
+			<tx:method name="get*" read-only="true" />
+			// other methods use the default transaction settings 
+			<tx:method name="*" />
+		</tx:attributes>
+	</tx:advice>  -->
+
+	<!-- 那些类的哪些方法参与事务
+	<aop:config>
+		<aop:pointcut id="allMethod" expression="execution(* test.zhaidw.transaction.dao.*.*(..))" />
+		///*.*(..) 所有的类 所有的方法 返回值任意
+		<aop:advisor pointcut-ref="allMethod" advice-ref="txAdvice" />
+	</aop:config>  -->
+
+
+</beans>
